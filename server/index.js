@@ -27,14 +27,21 @@ mongoose.connect(process.env.MONGODB_URI)
     process.exit(1);
   });
 
-// CORS configuration
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  maxAge: 86400
-}));
+  const allowedOrigins = ['http://localhost:3000', 'https://www.zamanix.com'];
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    maxAge: 86400
+  }));
+  
 
 // Body parser middleware
 app.use(express.json());
